@@ -4,3 +4,14 @@
   tasks:
     - name: Ping EC2 instance
       ansible.builtin.ping:
+
+- name: Install tree utility on Amazon Linux
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Ensure tree is installed
+      yum:
+        name: tree
+        state: present
+
