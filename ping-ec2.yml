@@ -18,3 +18,12 @@
       yum:
         name: python3
         state: present
+    - name: Latest version of all required packages installed
+      ansible.builtin.dnf:
+        name:
+         - firewalld
+         - httpd
+         - mariadb-server
+         - php
+         - php-mysqlnd
+        state: latest
