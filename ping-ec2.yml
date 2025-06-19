@@ -1,20 +1,63 @@
-- name: Test EC2 Connection
-  hosts: all
-  become: false
-  tasks:
-    - name: Ping EC2 instance
-      ansible.builtin.ping:
+- name: Update all system packages
+  ansible.builtin.yum:
+    name: '*'
+    state: latest
 
-- name: Install tree utility on Amazon Linux
-  hosts: all
-  become: yes
+- name: Install Apache HTTPD
+  ansible.builtin.yum:
+    name: httpd
+    state: present
 
-  tasks:
-    - name: Ensure tree is installed
-      yum:
-        name: tree
-        state: present
-    - name: Ensure python3 is installed
-      yum:
-        name: python3
-        state: present
+- name: Start and enable Apache service
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: Create index.html
+  ansible.builtin.copy:
+    dest: /var/www/html/index.html
+    content: <h1>Welcome to Amazon EC2 Web Server</h1>
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install firewalld
+  ansible.builtin.yum:
+    name: firewalld
+    state: present
+
+- name: Ensure firewalld is running and enabled
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Allow HTTP traffic
+  ansible.builtin.firewalld:
+    port: 80/tcp
+    permanent: true
+    state: enabled
+    immediate: yes
+
+- name: Create a deploy user
+  ansible.builtin.user:
+    name: deploy
+    state: present
+    groups: wheel
+
+- name: Install Python 3 and pip
+  ansible.builtin.yum:
+    name:
+      - python3
+      - python3-pip
+    state: present
+
+- name: Set custom hostname
+  ansible.builtin.hostname:
+    name: ec2-webserver
+
+- name: Reboot EC2 instance
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+    test_command: uptime
