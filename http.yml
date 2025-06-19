@@ -1,50 +1,52 @@
 ---
-- name: Configure Amazon Linux Worker Node
-  hosts: all
+- name: Setup Web Service on Amazon EC2
+  hosts: amazon_ec2
   become: true
   vars:
     ansible_python_interpreter: /usr/bin/python3
-    required_packages:
-      - httpd
-      - firewalld
+    web_service: httpd
+    web_port: 80
 
   tasks:
-
-    - name: Install required packages
+    - name: Install web service package
       ansible.builtin.yum:
-        name: "{{ required_packages }}"
+        name: "{{ web_service }}"
         state: present
-      notify:
-        - restart httpd
-        - restart firewalld
+      notify: start web service
 
-    - name: Ensure firewalld is enabled and started
+    - name: Install firewalld
+      ansible.builtin.yum:
+        name: firewalld
+        state: present
+      notify: restart firewalld
+
+    - name: Ensure firewalld is started and enabled
       ansible.builtin.service:
         name: firewalld
         state: started
         enabled: true
 
-    - name: Open HTTP port 80 through firewalld
+    - name: Allow HTTP port through firewalld
       ansible.builtin.firewalld:
-        port: 80/tcp
+        port: "{{ web_port }}/tcp"
         permanent: true
         state: enabled
         immediate: yes
-
-    - name: Ensure httpd is enabled and started
-      ansible.builtin.service:
-        name: httpd
-        state: started
-        enabled: true
+      notify: reload firewalld
 
   handlers:
-
-    - name: restart httpd
+    - name: start web service
       ansible.builtin.service:
-        name: httpd
-        state: restarted
+        name: "{{ web_service }}"
+        state: started
+        enabled: true
 
     - name: restart firewalld
       ansible.builtin.service:
         name: firewalld
         state: restarted
+
+    - name: reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded
