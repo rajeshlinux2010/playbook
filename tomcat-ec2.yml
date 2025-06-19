@@ -15,11 +15,13 @@
         state: started
         enabled: yes
 
-    - name: Open HTTP port in firewall
+    - name: Allow HTTP service in firewalld
+      become: true
       ansible.builtin.firewalld:
-        port: 80/tcp
-        permanent: yes
-        state: enabled
+      service: http
+      permanent: true
+      state: enabled
+      immediate: yes
       notify: Restart firewalld
 
   handlers:
