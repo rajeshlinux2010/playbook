@@ -8,7 +8,7 @@
 
   tasks:
     - name: Install Tomcat
-      apt:
+      yum:
         name: "{{ tomcat_package }}"
         state: present
       notify: Start Tomcat
