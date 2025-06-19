@@ -23,6 +23,7 @@
         name:
          - firewalld
          - httpd
+         - mariadb-server
          - php
          - php-mysqlnd
         state: latest
