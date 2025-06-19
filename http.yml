@@ -1,0 +1,50 @@
+---
+- name: Configure Amazon Linux Worker Node
+  hosts: amazon_workers
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    required_packages:
+      - httpd
+      - firewalld
+
+  tasks:
+
+    - name: Install required packages
+      ansible.builtin.yum:
+        name: "{{ required_packages }}"
+        state: present
+      notify:
+        - restart httpd
+        - restart firewalld
+
+    - name: Ensure firewalld is enabled and started
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Open HTTP port 80 through firewalld
+      ansible.builtin.firewalld:
+        port: 80/tcp
+        permanent: true
+        state: enabled
+        immediate: yes
+
+    - name: Ensure httpd is enabled and started
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+
+  handlers:
+
+    - name: restart httpd
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
+
+    - name: restart firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: restarted
