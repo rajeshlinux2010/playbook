@@ -37,4 +37,14 @@
         service: http
         permanent: true
         state: enabled
-        immediate: yes   
+        immediate: yes
+    - name: httpd enabled and running
+      ansible.builtin.service:
+        name: httpd
+        enabled: true
+        state: started
+    - name: mariadb-server enabled and running
+      ansible.builtin.service:
+        name: mariadb
+        enabled: true
+        state: started
