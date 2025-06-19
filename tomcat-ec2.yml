@@ -1,0 +1,21 @@
+---
+- name: Install and start Tomcat on EC2
+  hosts: all
+  become: yes
+
+  vars:
+    tomcat_package: tomcat9
+
+  tasks:
+    - name: Install Tomcat
+      apt:
+        name: "{{ tomcat_package }}"
+        state: present
+      notify: Start Tomcat
+
+  handlers:
+    - name: Start Tomcat
+      service:
+        name: "{{ tomcat_package }}"
+        state: started
+        enabled: yes
