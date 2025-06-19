@@ -16,6 +16,19 @@
   handlers:
     - name: Start Tomcat
       service:
-        name: "{{ tomcat_package }}"
-        state: started
-        enabled: yes
+      name: "{{ tomcat_package }}"
+      state: started
+      enabled: yes
+
+    - name: Allow Tomcat port in firewall
+      ansible.builtin.firewalld:
+      port: 8080/tcp
+      permanent: yes
+      state: enabled
+      become: yes
+      notify: Reload firewalld
+
+    - name: Reload firewalld
+      ansible.builtin.service:
+      name: firewalld
+      state: reloaded
