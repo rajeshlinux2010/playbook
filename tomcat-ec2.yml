@@ -14,7 +14,7 @@
         name: nginx
         state: started
         enabled: yes
-        notify: Restart firewalld
+      notify: Restart firewalld
 
   handlers:
     - name: Restart firewalld
