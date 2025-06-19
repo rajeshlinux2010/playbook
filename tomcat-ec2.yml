@@ -18,11 +18,11 @@
     - name: Allow HTTP service in firewalld
       become: true
       ansible.builtin.firewalld:
-      service: http
-      permanent: true
-      state: enabled
-      immediate: yes
-      notify: Restart firewalld
+       service: http
+       permanent: true
+       state: enabled
+       immediate: yes
+       notify: Restart firewalld
 
   handlers:
     - name: Restart firewalld
