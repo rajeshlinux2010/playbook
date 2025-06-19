@@ -15,3 +15,23 @@
         name: tree
         state: present
 
+- name: Install and start Tomcat on Amazon Linux
+  hosts: all
+  become: yes
+
+  vars:
+  tomcat_package: tomcat
+
+  tasks:
+            - name: Install Tomcat
+              yum:
+                name: "{{ tomcat_package }}"
+                state: present
+              notify: Start Tomcat
+
+  handlers:
+            - name: Start Tomcat
+              service:
+                name: "{{ tomcat_package }}"
+                state: started
+                enabled: yes
