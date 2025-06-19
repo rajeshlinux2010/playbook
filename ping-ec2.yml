@@ -14,4 +14,7 @@
       yum:
         name: tree
         state: present
-
+    - name: Ensure python3 is installed
+      yum:
+        name: python3
+        state: present
