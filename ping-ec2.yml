@@ -1,3 +1,24 @@
+- name: Test EC2 Connection
+  hosts: all
+  become: false
+  tasks:
+    - name: Ping EC2 instance
+      ansible.builtin.ping:
+
+- name: Install tree utility on Amazon Linux
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Ensure tree is installed
+      yum:
+        name: tree
+        state: present
+    - name: Ensure python3 is installed
+      yum:
+        name: python3
+        state: present
+
 - name: Update all system packages
   ansible.builtin.yum:
     name: '*'
